@@ -6,11 +6,13 @@ import { NavigationContainer } from "@react-navigation/native";
 import { TRootStackParamList } from "./types";
 
 const Stack = createStackNavigator<TRootStackParamList>();
+type props = { text: string }
 
 export const Navigate = () => {
     return <NavigationContainer>
         <Stack.Navigator screenOptions={{ 
-            headerTintColor: '#000'
+            headerTintColor: '#000',
+            headerBackTitleVisible: false,
         }}>
             <Stack.Screen
                 name = 'main'
@@ -20,7 +22,7 @@ export const Navigate = () => {
             <Stack.Screen
                 name = 'character'
                 component= { Character }
-                options = {{title:''}}
+                options = {({ route }) => ({ title: route.params.titleHeader })}
             />
         </Stack.Navigator>
     </NavigationContainer>

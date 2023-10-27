@@ -5,5 +5,6 @@ export type TRootStackParamList = {
   main: undefined;
   character: {
     item: Item
+    titleHeader: string
   }
 };

@@ -1,14 +1,14 @@
 import { StackScreenProps } from '@react-navigation/stack';
 import { TRootStackParamList } from '../navigation/types';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {StyleSheet, Text, View, Image, TextInput, FlatList, TouchableHighlight, ActivityIndicator,SafeAreaView} from 'react-native';
 import {useState, useEffect} from 'react'
 import axios from 'axios';
+import { Empty_view } from './empty_view';
+import { Character_Item } from './character_item';
 
-export type TMainProps = NativeStackScreenProps<TRootStackParamList, 'main'>
 export type Data = {
     info: Info
-    results: [Item],
+    results: Item[],
 }
 
 type Info = {
@@ -35,7 +35,7 @@ export type Item = {
     origin: Origin,
     location: Location,
     image: string,
-    erpisode: [string],
+    episode: string[],
     url: string,
     created: string
 }
@@ -49,8 +49,8 @@ export const Main = ( { navigation } : MainProps) =>  {
     const [filterText, setFilterText] = useState('');
     const [loadNumberPage, setLoadNumberPage] = useState(1)
     useEffect(() => {
-        const data = axios.get<Data>(`https://rickandmortyapi.com/api/character`, {params: {page: loadNumberPage, name: filterText}})
-        data.then(data => {
+         axios.get<Data>(`https://rickandmortyapi.com/api/character`, {params: {page: loadNumberPage, name: filterText}})
+        .then(data => {
             countLastCharacter = data.data.info.count
             setCharacters([...characters, ...data.data.results]);
         })
@@ -69,7 +69,7 @@ export const Main = ( { navigation } : MainProps) =>  {
     }
 
     const tapedView = (item: Item) => {
-        navigation.push('character', {item})
+        navigation.navigate('character', {item, titleHeader: item.name})
     }
 
     const loadMore = () => {
@@ -96,28 +96,14 @@ export const Main = ( { navigation } : MainProps) =>  {
                     data={characters}
                     onEndReachedThreshold={1}
                     onEndReached={loadMore}
-                    // contentContainerStyle={{ flex: 1 }}
                     ListEmptyComponent={
-                            <View style={styles.wrapper}>
-                                <Text style={styles.title}>Мы никого не нашли</Text>
-                                <Text style={styles.subtitle}>Попробуй скорректировать запрос</Text>
-                            </View>
+                            <Empty_view/>
                     }
                     renderItem={({item}) =>
-                        <TouchableHighlight
-                            activeOpacity = {0.7}
-                            onPress={() => tapedView(item)}
-                        >
-                            <View key={item.id} style={styles.item}>
-                                <Image
-                                    style={styles.characterLogo}
-                                    source={{
-                                        uri: item.image,
-                                    }}
-                                />
-                                <Text style={styles.titleCharacter}>{item.name}</Text>
-                            </View>
-                        </TouchableHighlight>
+                        <Character_Item 
+                            item = { item } 
+                            callback = { tapedView }
+                        />
                     }
                 />
             ) }
@@ -130,27 +116,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
     },
-    titleCharacter: {
-        fontSize: 20,
-        color: '#050510',
-        fontWeight: "bold",
-        marginLeft: 16,
-        flexShrink: 1,
-    },
-    characterLogo: {
-        width: 72,
-        height: 72,
-        borderRadius: 36,
-        margin: 5,
-    },
-    item: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        // paddingTop: 10,
-        padding: 10,
-        // paddingBottom: 10,
-        backgroundColor: '#fff',
-    },
     input: {
         borderColor: "gray",
         height: 50,
@@ -159,15 +124,6 @@ const styles = StyleSheet.create({
         marginLeft: 20,
         marginRight: 20,
         padding: 10,
-    },
-    title: {
-        fontSize: 22,
-        fontWeight: "bold",
-        marginTop: 12,
-    },
-    subtitle: {
-        color: '#97979B',
-        fontSize: 16
     },
     wrapper: {
         alignItems: "center",

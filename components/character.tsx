@@ -1,38 +1,41 @@
-import React, {useEffect} from "react";
-import {StyleSheet, Text, View, Image, TextInput, FlatList, TouchableHighlight} from 'react-native';
+import React, { useEffect } from "react";
+import {StyleSheet, Text, View, Image} from 'react-native';
 import { Label } from "./label";
 import { TRootStackParamList } from "../navigation/types";
 import { StackScreenProps } from "@react-navigation/stack";
 
 type CharacterProps = StackScreenProps<TRootStackParamList, 'character'>
 
-export const Character = ({navigation, route}: CharacterProps) => {
+export const Character = ({route, navigation}: CharacterProps) => {
+    const { item } = route.params
+    const { image, name, species, type } = item
+
     return (
         <View style={styles.container}>
             <View style={styles.imageContainer}>
                 <Image
                     style={styles.image}
                     source={{
-                        uri: route.params.item.image,
+                        uri: image,
                     }}
                 />
-                <Text style={styles.text}>{route.params.item.name}</Text>
+                <Text style={styles.text}>{name}</Text>
             </View>
             <Label
                 title='Species'
-                subtitle={route.params.item.species}
+                subtitle={species}
             ></Label>
             <Label
                 title='Type'
-                subtitle={route.params.item.type}
+                subtitle={type}
             ></Label>
             <Label
                 title='Origin name'
-                subtitle={route.params.item.origin.name}
+                subtitle={name}
             ></Label>
             <Label
                 title='Location name'
-                subtitle={route.params.item.location.name}
+                subtitle={name}
             ></Label>
         </View>
     )
